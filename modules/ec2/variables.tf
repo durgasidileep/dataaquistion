@@ -1,6 +1,3 @@
-# variable "aws_access_key" {}
-# variable "aws_secret_key" {}
-#variable "aws_region" {}
 variable "aws_region" {
   type = string
   default =  "us-east-1"
@@ -9,6 +6,31 @@ variable "aws_region" {
 variable "prefix" {
   type = string
   default = "dev"
+}
+
+variable "root_volume_type" {
+    type = string
+    default = "gp2"
+}
+
+variable "ebs_root_size" {
+    type = string
+    default = "120"
+}
+
+variable "ebs_volume_name" {
+    type = string
+    default = "/dev/xvdc"
+}
+
+variable "ebs_volume_size" {
+    type = string
+    default = "1024"
+}
+
+variable "ebs_volume_type" {
+    type = string
+    default = "gp2"
 }
 
 variable "amis" {
@@ -25,7 +47,7 @@ variable "vpc_cidr" {
 #variable "vpc_name" {}
 variable "vpc_name" {
   type = string
-  default =  "vpc_dataquistion"
+  default =  "vpc_dataacquisition"
 }
 #variable "IGW_name" {}
 variable "IGW_name" {
@@ -41,7 +63,7 @@ variable "key_name" {
 #variable "imagename" {}
 variable "imagename" {
    type = string
-   default = "prod"
+   default = "dev"
 }
 #variable "private_subnet_cidr" {}
 variable "private_subnet_cidr" {
@@ -68,10 +90,7 @@ variable "environment" { default = "prod" }
 variable "instance_type" {
   type = map
   default = {
-#    dev = "t2.nano"
-#    test = "t2.micro"
-     prod = "t2.micro"
-    #prod = "c5.2xlarge" # This configuration is as per the Ingestion0 on premise server
+     dev = "t2.micro"
+    #prd = "c5.2xlarge" # This configuration is as per the Ingestion0 on premise server
     }
 }
-

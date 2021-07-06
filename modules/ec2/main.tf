@@ -1,3 +1,4 @@
+
 locals {
   server_name          = "${var.prefix}-server"
   ebs_volume_type      = "gp3"
@@ -8,8 +9,8 @@ locals {
 resource "aws_instance" "ingestion-dev" {
     ami = var.imagename
     availability_zone = "us-east-1a"
-    instance_type = "t2.micro"
-    key_name = "chilakakey1" 
+    instance_type = var.instance_type
+    key_name = "dataacquisition" 
     subnet_id = "${aws_subnet.subnet-private.id}"
     vpc_security_group_ids = ["${aws_security_group.allow_all.id}"]	
     tags = {
@@ -18,14 +19,14 @@ resource "aws_instance" "ingestion-dev" {
 
  }
 root_block_device {
-    volume_type = "gp2"
-    volume_size = "120"
+    volume_type = var.root_volume_type
+    volume_size = var.ebs_root_size
 }
 
 ebs_block_device {
-    device_name = "/dev/xvdc"
-    volume_size = 1024
-    volume_type = "gp2"
+    device_name = var.ebs_volume_name
+    volume_size = var.ebs_volume_size
+    volume_type = var.ebs_volume_type
     encrypted = "true"
   }
 }
@@ -35,13 +36,13 @@ resource "aws_vpc" "default" {
     enable_dns_hostnames = true
     tags = {
         Name = "${var.vpc_name}"
-	    Owner = "Aravind"
 	    environment = "${var.environment}"
     }
 }
 
 resource "aws_security_group" "allow_all" {
-  name        = "Mercury-allow-custom-ports"
+  name        = "${local.server_name}-sg"
+  #name        = "dataacquisition-allow-custom-ports"
   description = "Allow all inbound traffic"
   vpc_id      = "${aws_vpc.default.id}"
 
@@ -53,9 +54,9 @@ resource "aws_security_group" "allow_all" {
   }
 
   egress {
-    from_port       = 0
-    to_port         = 0
-    protocol        = "-1"
+    from_port       = 3389
+    to_port         = 3389
+    protocol        = "tcp"
     cidr_blocks     = ["0.0.0.0/0"]
     }
 }
@@ -95,3 +96,5 @@ resource "aws_route_table_association" "terraform-private" {
     subnet_id = "${aws_subnet.subnet-private.id}"
     route_table_id = "${aws_route_table.terraform-private.id}"
 }
+
+
